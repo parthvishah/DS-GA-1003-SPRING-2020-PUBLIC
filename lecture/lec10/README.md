@@ -16,3 +16,5 @@
 - Multivariate Gaussian
     - https://davidrosenberg.github.io/mlcourse/in-prep/multivariate-gaussian.pdf)
     - http://cs229.stanford.edu/section/gaussians.pdf
+- Bayesian linear regression
+    - Notes by Rosenberg: https://davidrosenberg.github.io/mlcourse/in-prep/bayesian-regression.pdf
