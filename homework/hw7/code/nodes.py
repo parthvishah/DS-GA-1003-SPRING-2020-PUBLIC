@@ -177,7 +177,7 @@ class AffineNode(object):
         x: node for which x.out is a numpy array of shape (d)
         b: node for which b.out is a numpy array of shape (m) (i.e. vector of length m)
     """
-     def __init__(self, W,x,b,node_name):
+    def __init__(self, W,x,b,node_name):
         self.node_name = node_name
         self.out = None
         self.d_out = None
