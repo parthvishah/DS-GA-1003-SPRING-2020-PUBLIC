@@ -7,7 +7,7 @@ import plot_utils
 
 class RidgeRegression(BaseEstimator, RegressorMixin):
     """ Ridge regression with computation graph """
-    def __init__(self, l2_reg=1, step_size=.005,  max_num_epochs = 5000):
+    def __init__(self, l2_reg=l2reg, step_size=.005,  max_num_epochs = 5000):
         self.max_num_epochs = max_num_epochs
         self.step_size = step_size
 
@@ -23,7 +23,7 @@ class RidgeRegression(BaseEstimator, RegressorMixin):
                                                  node_name="prediction")
         self.obj_reg = nodes.SquaredL2DistanceNode(a=self.prediction, b=self.y,
                                                node_name="square loss")
-        self.obj_norm = nodes.L2NormPenaltyNode(l2_reg=1, w=self.w,
+        self.obj_norm = nodes.L2NormPenaltyNode(l2_reg=l2reg, w=self.w,
                                                node_name="l2 penalty")
         self.objective = nodes.SumNode(a=self.obj_reg, b=self.obj_norm,
                                                node_name="penalized sq loss")
