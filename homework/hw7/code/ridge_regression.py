@@ -88,14 +88,14 @@ def main():
     X = featurize(x)
 
     l2reg = 1
-    estimator = RidgeRegression(l2_reg=l2reg, step_size=0.00005, max_num_epochs=2000)
+    estimator = RidgeRegression(l2_reg = 1, step_size=0.00005, max_num_epochs=2000)
     estimator.fit(X_train, y_train)
     name = "Ridge with L2Reg="+str(l2reg)
     pred_fns.append({"name":name, "preds": estimator.predict(X) })
 
 
     l2reg = 0
-    estimator = RidgeRegression(l2_reg=l2reg, step_size=0.0005, max_num_epochs=500)
+    estimator = RidgeRegression(l2_reg= 0, step_size=0.0005, max_num_epochs=500)
     estimator.fit(X_train, y_train)
     name = "Ridge with L2Reg="+str(l2reg)
     pred_fns.append({"name":name, "preds": estimator.predict(X) })
