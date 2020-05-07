@@ -7,7 +7,7 @@ import plot_utils
 
 class RidgeRegression(BaseEstimator, RegressorMixin):
     """ Ridge regression with computation graph """
-    def __init__(self, l2_reg=l2reg, step_size=.005,  max_num_epochs = 5000):
+    def __init__(self, l2reg, step_size=.005,  max_num_epochs = 5000):
         self.max_num_epochs = max_num_epochs
         self.step_size = step_size
 
