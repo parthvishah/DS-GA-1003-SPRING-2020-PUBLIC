@@ -124,6 +124,19 @@ class L2NormPenaltyNode(object):
         self.l2_reg = np.array(l2_reg)
         self.w = w
         
+        def forward(self):
+        self.out = self.l2_reg * np.dot(self.w.out,self.w.out)
+        self.d_out = np.zeros(self.out.shape)
+        return self.out
+
+    def backward(self):
+        d_w = 2*self.l2_reg*self.d_out*self.w.out
+        self.w.d_out +=d_w
+        return self.d_out
+
+    def get_predecessors(self):
+        return [self.w]
+
         ## TODO
 
 class SumNode(object):
@@ -135,7 +148,27 @@ class SumNode(object):
         b: node for which b.out is a numpy array of the same shape as a
         node_name: node's name (a string)
         """
-        ## TODO
+        self.node_name=node_name
+        self.out=None
+        self.d_out=None
+        self.a=a
+        self.b=b
+
+    def forward(self):
+        self.out=self.a.out+self.b.out
+        self.d_out=np.zeros(self.out.shape)
+        return(self.out)
+
+    def backward(self):
+        d_a=self.d_out
+        d_b=self.d_out
+        self.a.d_out+=d_a
+        self.b.d_out+=d_b
+        return(self.d_out)
+
+    def get_predecessors(self):
+        return [self.a,self.b]
+
 
 class AffineNode(object):
     """Node implementing affine transformation (W,x,b)-->Wx+b, where W is a matrix,
@@ -145,12 +178,53 @@ class AffineNode(object):
         x: node for which x.out is a numpy array of shape (d)
         b: node for which b.out is a numpy array of shape (m) (i.e. vector of length m)
     """
-    ## TODO
+     def __init__(self, W,x,b,node_name):
+        self.node_name = node_name
+        self.out = None
+        self.d_out = None
+        self.W = W
+        self.x = x
+        self.b = b
+
+    def forward(self):
+        self.out = np.dot(self.W.out, self.x.out)+self.b.out
+        self.d_out = np.zeros(self.out.shape)
+        return self.out
+
+    def backward(self):
+        d_W = np.outer(self.d_out, self.x.out)
+        d_x = np.dot(self.W.out.T, self.d_out)
+        d_b = self.d_out
+        self.W.d_out+=d_W
+        self.x.d_out+=d_x
+        self.b.d_out+=d_b
+        return self.d_out
+    
+    def get_predecessors(self):
+        return [self.W, self.x, self.b]
 
 class TanhNode(object):
     """Node tanh(a), where tanh is applied elementwise to the array a
         Parameters:
         a: node for which a.out is a numpy array
     """
-    ## TODO
+    def __init__(self, a,node_name):
+        self.node_name = node_name
+        self.out = None
+        self.d_out = None
+        self.a = a
+
+    def forward(self):
+        self.out = np.tanh(self.a.out)
+        self.d_out = np.zeros(self.out.shape)
+        return self.out
+
+    def backward(self):
+        d_a = self.d_out*(1-self.out**2)
+        self.a.d_out+=d_a
+        return self.d_out
+       
+
+    def get_predecessors(self):
+        return [self.a]
 
