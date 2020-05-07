@@ -13,7 +13,7 @@ class MLPRegression(BaseEstimator, RegressorMixin):
     """ MLP regression with computation graph """
     def __init__(self, num_hidden_units=10, step_size=.005, init_param_scale=0.01, max_num_epochs = 5000):
         self.num_hidden_units = num_hidden_units
-        self.init_param_scale = init_param_scale
+        self.init_param_scale = 0.01
         self.max_num_epochs = max_num_epochs
         self.step_size = step_size
 
@@ -40,16 +40,18 @@ class MLPRegression(BaseEstimator, RegressorMixin):
         self.graph = graph.ComputationGraphFunction(self.inputs, self.outcomes,
                                                           self.parameters, self.prediction,
                                                           self.objective)
-
     def fit(self, X, y):
         num_instances, num_ftrs = X.shape
         y = y.reshape(-1)
-
-        ## TODO: Initialize parameters (small random numbers -- not all 0, to break symmetry )
+        num_hidden_units = self.num_hidden_units
         s = self.init_param_scale
-        init_values = None ## TODO
+        ## TODO: Initialize parameters (small random numbers -- not all 0, to break symmetry )
+        parameter_vals = {"W1": s*np.random.standard_normal((num_hidden_units, num_ftrs)),
+                          "b1": s*np.random.standard_normal((num_hidden_units)),
+                          "w2": s*np.random.standard_normal((num_hidden_units)),
+                          "b2": s*np.array(np.random.randn()) }
 
-        self.graph.set_parameters(init_values)
+        self.graph.set_parameters(parameter_vals)
 
         for epoch in range(self.max_num_epochs):
             shuffle = np.random.permutation(num_instances)
@@ -63,7 +65,7 @@ class MLPRegression(BaseEstimator, RegressorMixin):
                 steps = {}
                 for param_name in grads:
                     steps[param_name] = -self.step_size * grads[param_name]
-                self.graph.increment_parameters(steps)
+                    self.graph.increment_parameters(steps)
 
             if epoch % 50 == 0:
                 train_loss = sum((y - self.predict(X,y)) **2)/num_instances
@@ -114,4 +116,4 @@ def main():
     plot_utils.plot_prediction_functions(x, pred_fns, x_train, y_train, legend_loc="best")
 
 if __name__ == '__main__':
-  main()
+    main()
