@@ -106,6 +106,7 @@ def main():
     pred_fns.append({"name": "Target Parameter Values (i.e. Bayes Optimal)", "coefs": coefs_true, "preds": target_fn(x)})
 
     plot_utils.plot_prediction_functions(x, pred_fns, x_train, y_train, legend_loc="best")
+    plot.show()
 
 if __name__ == '__main__':
   main()
