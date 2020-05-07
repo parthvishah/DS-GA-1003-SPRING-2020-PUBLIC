@@ -20,7 +20,26 @@ class MLPRegression(BaseEstimator, RegressorMixin):
         # Build computation graph
         self.x = nodes.ValueNode(node_name="x") # to hold a vector input
         self.y = nodes.ValueNode(node_name="y") # to hold a scalar response
-        ## TODO
+        self.W1 = nodes.ValueNode(node_name="W1") 
+        self.w2 = nodes.ValueNode(node_name="w2")  
+        self.b1 = nodes.ValueNode(node_name="b1") 
+        self.b2 = nodes.ValueNode(node_name="b2") 
+        self.affine = nodes.AffineNode(W=self.W1, x=self.x, b=self.b1,
+                                                 node_name="affine")
+        self.tanh = nodes.TanhNode(a=self.affine, node_name="tanh")
+        self.prediction = nodes.VectorScalarAffineNode(x=self.tanh, w=self.w2, b=self.b2,
+                                                           node_name="prediction")
+        self.objective = nodes.SquaredL2DistanceNode(a=self.prediction, b=self.y,
+                                               node_name="square loss")
+
+        
+        self.inputs = [self.x]
+        self.outcomes = [self.y]
+        self.parameters = [self.W1, self.b1,self.w2, self.b2]
+
+        self.graph = graph.ComputationGraphFunction(self.inputs, self.outcomes,
+                                                          self.parameters, self.prediction,
+                                                          self.objective)
 
     def fit(self, X, y):
         num_instances, num_ftrs = X.shape
